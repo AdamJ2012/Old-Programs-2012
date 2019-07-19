@@ -1,0 +1,53 @@
+Code
+
+import javax.swing.JOptionPane;
+/**
+ * @author: adam_j_schachte
+ * 1st and 2nd Period
+ * @date: 10/28/11
+ * @purpose: Make a Java program that uses do while loops
+ * 			 to add the users' numbers together.
+ */
+public class SumOfTheNumbers {
+	public static void addition1(){
+		double Number=0;
+		double Entry=0;
+		String Message1="Enter Zero to end the Program.";
+		String Message2="\nThis program adds numbers.";
+		do {
+			Entry=Double.valueOf((JOptionPane.showInputDialog(null,
+					Message1+Message2, "Reverser",
+					JOptionPane.INFORMATION_MESSAGE)));
+			Number=Number+Entry;
+			Message2="\n"+Number;
+		}while (Entry!=0);
+	}//end of method.
+	public static void main(String[] args) {
+		addition1();
+	}//end of main.
+}//end of class
+
+
+
+
+Output
+
+Exception in thread "main" java.lang.NumberFormatException: For input string: "infinity"
+	at sun.misc.FloatingDecimal.readJavaFormatString(Unknown Source)
+	at java.lang.Double.valueOf(Unknown Source)
+	at SumOfTheNumbers.addition1(SumOfTheNumbers.java:16)
+	at SumOfTheNumbers.main(SumOfTheNumbers.java:24)
+
+
+Exception in thread "main" java.lang.NumberFormatException: For input string: "hello thar!"
+	at sun.misc.FloatingDecimal.readJavaFormatString(Unknown Source)
+	at java.lang.Double.valueOf(Unknown Source)
+	at SumOfTheNumbers.addition1(SumOfTheNumbers.java:16)
+	at SumOfTheNumbers.main(SumOfTheNumbers.java:24)
+
+
+
+
+
+
+

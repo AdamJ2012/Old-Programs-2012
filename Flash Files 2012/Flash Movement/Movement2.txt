@@ -1,0 +1,65 @@
+keyListener = new Object();
+keyListener.onKeyDown = function() {
+	var i:Number=0;
+	if (Key.isDown(Key.UP)){
+		i=i+1;
+	}
+	if (Key.isDown(Key.DOWN)){
+		i=i+2;
+	}
+	if (Key.isDown(Key.LEFT)){
+		i=i+4;
+	}
+	if (Key.isDown(Key.RIGHT)){
+		i=i+8;
+	}
+	if (i==1){
+		trace(i+"  Up");
+	}
+	else if (i==2){
+		trace(i+"  Down");
+	}
+	else if (i==3){
+		trace(i+"  Up and Down");
+	}
+	else if (i==4){
+		trace(i+"  Left");
+	}
+	else if (i==5){
+		trace(i+"  Up and Left");
+	}
+	else if (i==6){
+		trace(i+"  Down and Left");
+	}
+	else if (i==7){
+		trace(i+"  Up, Down, and Left");
+	}
+	else if (i==8){
+		trace(i+"  Right");
+	}
+	else if (i==9){
+		trace(i+"  Up and Right");
+	}
+	else if (i==10){
+		trace(i+" Down and Right");
+	}
+	else if (i==11){
+		trace(i+" Up, Down, and Right");
+	}
+	else if (i==12){
+		trace(i+" Left and Right");
+	}
+	else if (i==13){
+		trace(i+" Up, Left, and Right");
+	}
+	else if (i==14){
+		trace(i+" Down, Left, and Right");
+	}
+	else if (i==15){
+		trace(i+" Up, Down, Left, and Right");
+	}
+	else {
+		trace(i);
+	}
+}//end of function()
+Key.addListener(keyListener);

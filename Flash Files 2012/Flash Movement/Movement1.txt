@@ -1,0 +1,53 @@
+keyListener = new Object();
+keyListener.onKeyDown = function() {
+	if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+		trace("Up, Down, Left, and Right");//all 4 directions.
+	}
+	else if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)){
+		trace("Up, Down, and Left");//3 directions.  Missing right.
+	}
+	else if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.RIGHT)){
+		trace("Up, Down, and Right");//3 directions.  Missing left.
+	}
+	else if (Key.isDown(Key.UP)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+		trace("Up, Left, and Right");//3 directions.  Missing down.
+	}
+	else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+		trace("Down, Left, and Right");//3 directions.  Missing up.
+	}
+	else {//Beginning of the 2 directional code.
+		if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)){
+		trace("Up and Down");//2 directions.  1st up.  1st down.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.LEFT)){
+			trace("Up and Left");//2 directions.  2nd up.  1st left.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.RIGHT)){
+			trace("Up and Right");//2 directions.  3rd up.  1st right.
+		}
+		else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)){
+			trace("Down and Left");//2 directions.  2nd down.  2nd left.
+		}
+		else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.RIGHT)){
+			trace("Down and Right");//2 directions.  3rd down.  2nd right.
+		}
+		else if (Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Left and Right");//2 directions.  3rd left.  3rd right.
+		}
+		else {//Beginning of the 1 direction.
+			if (Key.isDown(Key.UP)){
+				trace("Up");
+			}
+  			else if (Key.isDown(Key.DOWN)){
+				trace("Down");
+			}
+			else if (Key.isDown(Key.LEFT)){
+				trace("Left");
+			}
+  			else if (Key.isDown(Key.RIGHT)){
+				trace("Right");
+			}
+		}//end of the 1 directional code.
+	}//end of the else statement that started the 2 directional code.
+}//end of keyListener.onKeyDown = function()
+Key.addListener(keyListener);

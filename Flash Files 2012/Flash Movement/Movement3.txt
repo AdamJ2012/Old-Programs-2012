@@ -1,0 +1,141 @@
+/*
+Adam Schachte
+February 3,2012
+ActionScript 2.0
+You can move the camera freely when you hold the shift button.
+When you move the character with the arrow keys, the camera follows him.
+Left and right make him walk.  Up and down make him rotate.
+Ctrl makes him attack.  The movement is still alitle choppy.
+The drawing of a building just makes it easy to see the guy move.
+*/
+
+attack=false;
+
+keyListener = new Object();
+keyListener.onKeyDown = function() {
+	if (Key.isDown(Key.SHIFT)){//beginning of debug movement with shift button.
+		if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Down, Left, and Right");//all 4 directions.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)){
+			trace("Up, Down, and Left");//3 directions.  Missing right.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Down, and Right");//3 directions.  Missing left.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Left, and Right");//3 directions.  Missing down.
+			_y=_y+10;//moves stage up
+		}
+		else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Down, Left, and Right");//3 directions.  Missing up.
+			_y=_y-10;
+		}
+		else {//Beginning of the 2 directional code.
+			if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)){
+			trace("Up and Down");//2 directions.  1st up.  1st down.
+		}
+			else if (Key.isDown(Key.UP)&&Key.isDown(Key.LEFT)){
+				trace("Up and Left");//2 directions.  2nd up.  1st left.
+				_y=_y+10;//moves stage up
+				_x=_x+10;//moves stage left
+			}
+			else if (Key.isDown(Key.UP)&&Key.isDown(Key.RIGHT)){
+				trace("Up and Right");//2 directions.  3rd up.  1st right.
+				_y=_y+10;//moves stage up
+				_x=_x-10;//moves stage right
+			}
+			else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)){
+				trace("Down and Left");//2 directions.  2nd down.  2nd left.
+				_y=_y-10;//moves stage down
+				_x=_x+10;//moves stage left
+			}
+			else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.RIGHT)){
+				trace("Down and Right");//2 directions.  3rd down.  2nd right.
+				_y=_y-10;//moves stage down
+				_x=_x-10;//moves stage right
+			}
+			else if (Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+				trace("Left and Right");//2 directions.  3rd left.  3rd right.
+			}
+			else {//Beginning of the 1 direction.
+				if (Key.isDown(Key.UP)){
+					trace("Up");
+					//blue1.y=blue1.y+10;
+					_y=_y+10;//moves stage up
+				}
+	  			else if (Key.isDown(Key.DOWN)){
+					trace("Down");
+					_y=_y-10;//moves stage down
+				}
+				else if (Key.isDown(Key.LEFT)){
+					trace("Left");
+					_x=_x+10;//moves stage left
+				}
+  				else if (Key.isDown(Key.RIGHT)){
+					trace("Right");
+					_x=_x-10;//moves stage right
+				}
+			}//end of the 1 directional code.
+		}//end of the else statement that started the 2 directional code.
+	}//end of debug movement.
+	else {
+		if ((Key.isDown(Key.LEFT)or keyPress=="a")and
+				(Key.isDown(Key.RIGHT)or keyPress=="d")){
+			trace("character left and right");
+			if (!attack) {
+				blue1.gotoAndStop("stance");
+			}
+		}//end of if left and right are pressed statement.
+		else {
+			if ((Key.isDown(Key.LEFT)or keyPress=="a")and
+					(!Key.isDown(Key.RIGHT)and keyPress!="d")){
+				blue1._rotation=0;
+				blue1._xscale=-100;
+				blue1._x-=5;
+				trace("character left");
+				if (!attack) {
+					blue1.gotoAndStop("walk");
+				}
+			}//end of if left is pressed statement.
+			if ((!Key.isDown(Key.LEFT)or keyPress!="a")and
+					(Key.isDown(Key.RIGHT)or keyPress=="d")){
+				blue1._rotation=0;
+				blue1._xscale=100;
+				blue1._x+=5;
+				trace("character right");
+				if (attack==false) {
+					blue1.gotoAndStop("walk");
+				}
+			}//end of if right is pressed statement.
+		}//end of else statement.
+//Left/right movement should be indepentent of up/down movement.
+		if ((Key.isDown(Key.DOWN)or keyPress=="s")&&
+			(Key.isDown(Key.UP)or keyPress=="w")){
+			trace("character up and down");
+		}
+		else if (Key.isDown(Key.DOWN)or keyPress=="s"){
+			trace ("character down");
+			blue1._rotation-=5;
+		}
+		else if (Key.isDown(Key.UP)or keyPress=="w"){
+			trace ("character up");
+			blue1._rotation+=5;
+		}
+		else if (Key.isDown(Key.CONTROL)){
+			attack=true;
+			blue1.gotoAndStop("attack");
+			trace("character attack");
+		}
+		if (attack){
+			blue1.gotoAndStop("attack");
+			trace("character attack");
+		}
+	}//end of character movement.
+	//camera movement.
+		if (!Key.isDown(Key.SHIFT)){
+			_root._x=-(blue1._x)+222.85
+			_root._y=-(blue1._y)+209.75
+		}
+}//end of keyListener.onKeyDown = function()
+Key.addListener(keyListener);

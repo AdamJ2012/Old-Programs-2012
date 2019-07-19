@@ -1,0 +1,497 @@
+~_root(1) code~
+
+stop();
+onEnterFrame = function () {
+	loadbar._xscale = _root.getBytesLoaded()/_root.getBytesTotal()*100;
+};
+if ((_root.getBytesLoaded()/_root.getBytesTotal()*100)>=100) {
+	_root.nextFrame();
+	loadbar.play();
+}
+
+~_root(2) code~
+
+/*
+Adam Schachte
+February 28,2012
+ActionScript 2.0
+
+You can move the camera freely when you hold the shift button.
+When you move the character with the arrow keys, the camera follows him.
+Left and right make him walk.  Up and down make him rotate.
+Ctrl makes him attack.  The movement isn't choppy anymore.
+The drawing of a building just makes it easy to see the guy move.
+I added a loading bar, a HUD, green orbs, particles, and organized the library.
+Also, the WASD keys work, but when you use them, the walking animation doesn't work.
+*/
+stop();
+
+blue1.walkspeed=5;
+blue1.attack=false;
+blue1.jump=false;
+blue1.crouch=false;
+
+upButton=false;
+downButton=false;
+leftButton=false;
+rightButton=false;
+attackButton=false;
+debugButton=false;
+
+
+var greenOrbs=0;
+var greenOrbMax=0;
+var particles=0;
+
+debugMove = function(){
+	if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Down, Left, and Right");//all 4 directions.
+		}
+	else if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)){
+			trace("Up, Down, and Left");//3 directions.  Missing right.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Down, and Right");//3 directions.  Missing left.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Left, and Right");//3 directions.  Missing down.
+			_y=_y+10;//moves stage up
+		}
+		else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Down, Left, and Right");//3 directions.  Missing up.
+			_y=_y-10;
+		}
+		else {//Beginning of the 2 directional code.
+			if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)){
+			trace("Up and Down");//2 directions.  1st up.  1st down.
+		}
+			else if (Key.isDown(Key.UP)&&Key.isDown(Key.LEFT)){
+				trace("Up and Left");//2 directions.  2nd up.  1st left.
+				_y=_y+10;//moves stage up
+				_x=_x+10;//moves stage left
+			}
+			else if (Key.isDown(Key.UP)&&Key.isDown(Key.RIGHT)){
+				trace("Up and Right");//2 directions.  3rd up.  1st right.
+				_y=_y+10;//moves stage up
+				_x=_x-10;//moves stage right
+			}
+			else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)){
+				trace("Down and Left");//2 directions.  2nd down.  2nd left.
+				_y=_y-10;//moves stage down
+				_x=_x+10;//moves stage left
+			}
+			else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.RIGHT)){
+				trace("Down and Right");//2 directions.  3rd down.  2nd right.
+				_y=_y-10;//moves stage down
+				_x=_x-10;//moves stage right
+			}
+			else if (Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+				trace("Left and Right");//2 directions.  3rd left.  3rd right.
+			}
+			else {//Beginning of the 1 direction.
+				if (Key.isDown(Key.UP)){
+					trace("Up");
+					//blue1.y=blue1.y+10;
+					_y=_y+10;//moves stage up
+				}
+	  			else if (Key.isDown(Key.DOWN)){
+					trace("Down");
+					_y=_y-10;//moves stage down
+				}
+				else if (Key.isDown(Key.LEFT)){
+					trace("Left");
+					_x=_x+10;//moves stage left
+				}
+  				else if (Key.isDown(Key.RIGHT)){
+					trace("Right");
+					_x=_x-10;//moves stage right
+				}
+			}//end of the 1 directional code.
+		}//end of the else statement that started the 2 directional code.
+}//end of the debugMove function.
+
+Listen=function(){
+	if (Key.isDown(Key.LEFT) or Key.isDown(65)){
+		leftButton=true;
+	}//end of if left is pressed statement.
+	else {
+		leftButton=false;
+	}
+	if (Key.isDown(Key.RIGHT) or Key.isDown(68)){
+		rightButton=true;
+	}//end of if right is pressed statement.
+	else {
+		rightButton=false;
+	}
+	if (Key.isDown(Key.UP) or Key.isDown(87)){
+		upButton=true;
+	}//end of if up is pressed statement.
+	else {
+		upButton=false;
+	}
+	if (Key.isDown(Key.DOWN) or Key.isDown(83)){
+		downButton=true;
+	}//end of if down is pressed statement.
+	else {
+		downButton=false;
+	}
+	if (Key.isDown(Key.CONTROL)){
+		attackButton=true;
+	}//end of if alt is pressed statement.
+	else {
+		attackButton=false;
+	}
+	if (Key.isDown(Key.SHIFT)){
+		debugButton=true;
+	}//end of if shift is pressed statement.
+	else {
+		debugButton=false;
+	}
+}//end of Listen=function()
+
+
+Move=function(){
+	if (debugButton){//beginning of debug movement with shift button.
+		debugMove();
+//		if(!attack){
+//			blue1.gotoAndStop("stance");
+//		}
+	}
+	else {
+		if (leftButton and rightButton){
+			trace("character left and right");
+			if (!attack) {
+				blue1.gotoAndStop("stance");
+			}
+		}//end of if left and right are pressed statement.
+		else {
+			if (leftButton and !rightButton){
+				blue1._rotation=0;
+				blue1._xscale=-100;
+				blue1._x-=blue1.walkspeed;
+				trace("character left");
+				if (!attack) {
+					blue1.gotoAndStop("walk");
+				}
+			}//end of if left is pressed statement.
+			if (!leftButton and rightButton){
+				blue1._rotation=0;
+				blue1._xscale=100;
+				blue1._x+=blue1.walkspeed;
+				trace("character right");
+				if (!attack) {
+					blue1.gotoAndStop("walk");
+				}
+			}//end of if right is pressed statement.
+		}//end of else statement.
+//Left/right movement should be indepentent of up/down movement.
+		if (downButton && upButton){
+			trace("character up and down");
+		}//end of if up and down are pressed statement.
+		else if (downButton){
+			trace ("character down");
+			blue1._rotation-=5;
+		}//end of else if down is pressed statement.
+		else if (upButton){
+			trace ("character up");
+			blue1._rotation+=5;
+		}//end of else if up is pressed statement.
+		else if (attackButton){
+			attack=true;
+			blue1.gotoAndStop("attack");
+			trace("character attack");
+		}//end of if else the attack button is pressed statement.
+		if (attack){
+			blue1.gotoAndStop("attack");
+			trace("character attack");
+		}
+	}//end of character movement.
+}//end of Move=function()
+this.onEnterFrame = function (){
+	
+	Listen();
+	Move();
+	//camera movement.
+		if (!debugButton){
+			_root._x=-(blue1._x)+222.85
+			_root._y=-(blue1._y)+209.75
+		}
+		hud._x=-_root._x;
+		hud._y=-_root._y;
+		
+		if (greenOrbs/greenOrbMax>=1){
+			_root.hud.loadbar.play();
+		}
+		else {
+			_root.hud.loadbar.gotoAndStop(1);
+		}
+		
+		
+	//green orbs
+		if (_root.blue1.hitTest(exit)==true and greenOrbs>=greenOrbMax){
+			gotoAndStop("secret");
+			trace("exit")
+		}
+		for (var greenOrbNum=1;greenOrbNum<=greenOrbMax;greenOrbNum++){
+			if (blue1.hitTest(_root["greenOrb"+greenOrbNum])==true){
+				for (var i=1;i<=7;i++){
+					part = _root.attachMovie("particle","particle"+particles,this.getNextHighestDepth());
+					part._x=_root["greenOrb"+greenOrbNum]._x;
+					part._y=_root["greenOrb"+greenOrbNum]._y;					
+				}
+				greenOrbs++;
+				_root["greenOrb"+greenOrbNum]._x=-20;
+			}//end of hit test if statement.
+		}//end of for loop.
+		trace(particles+" particles");
+} //end of function
+
+~_root(3) code~  Frame Name:secret
+
+
+stop();
+_root._x=_root._y=0;
+
+~_root(4) code~
+
+stop();
+
+blue1.walkspeed=5;
+blue1.attack=false;
+blue1.jump=false;
+blue1.crouch=false;
+
+upButton=false;
+downButton=false;
+leftButton=false;
+rightButton=false;
+attackButton=false;
+debugButton=false;
+
+
+var greenOrbs=0;
+var greenOrbMax=0;
+var particles=0;
+
+debugMove = function(){
+	if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Down, Left, and Right");//all 4 directions.
+		}
+	else if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)){
+			trace("Up, Down, and Left");//3 directions.  Missing right.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Down, and Right");//3 directions.  Missing left.
+		}
+		else if (Key.isDown(Key.UP)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Up, Left, and Right");//3 directions.  Missing down.
+			_y=_y+10;//moves stage up
+		}
+		else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+			trace("Down, Left, and Right");//3 directions.  Missing up.
+			_y=_y-10;
+		}
+		else {//Beginning of the 2 directional code.
+			if (Key.isDown(Key.UP)&&Key.isDown(Key.DOWN)){
+			trace("Up and Down");//2 directions.  1st up.  1st down.
+		}
+			else if (Key.isDown(Key.UP)&&Key.isDown(Key.LEFT)){
+				trace("Up and Left");//2 directions.  2nd up.  1st left.
+				_y=_y+10;//moves stage up
+				_x=_x+10;//moves stage left
+			}
+			else if (Key.isDown(Key.UP)&&Key.isDown(Key.RIGHT)){
+				trace("Up and Right");//2 directions.  3rd up.  1st right.
+				_y=_y+10;//moves stage up
+				_x=_x-10;//moves stage right
+			}
+			else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.LEFT)){
+				trace("Down and Left");//2 directions.  2nd down.  2nd left.
+				_y=_y-10;//moves stage down
+				_x=_x+10;//moves stage left
+			}
+			else if (Key.isDown(Key.DOWN)&&Key.isDown(Key.RIGHT)){
+				trace("Down and Right");//2 directions.  3rd down.  2nd right.
+				_y=_y-10;//moves stage down
+				_x=_x-10;//moves stage right
+			}
+			else if (Key.isDown(Key.LEFT)&&Key.isDown(Key.RIGHT)){
+				trace("Left and Right");//2 directions.  3rd left.  3rd right.
+			}
+			else {//Beginning of the 1 direction.
+				if (Key.isDown(Key.UP)){
+					trace("Up");
+					//blue1.y=blue1.y+10;
+					_y=_y+10;//moves stage up
+				}
+	  			else if (Key.isDown(Key.DOWN)){
+					trace("Down");
+					_y=_y-10;//moves stage down
+				}
+				else if (Key.isDown(Key.LEFT)){
+					trace("Left");
+					_x=_x+10;//moves stage left
+				}
+  				else if (Key.isDown(Key.RIGHT)){
+					trace("Right");
+					_x=_x-10;//moves stage right
+				}
+			}//end of the 1 directional code.
+		}//end of the else statement that started the 2 directional code.
+}//end of the debugMove function.
+
+Listen=function(){
+	if (Key.isDown(Key.LEFT) or Key.isDown(65)){
+		leftButton=true;
+	}//end of if left is pressed statement.
+	else {
+		leftButton=false;
+	}
+	if (Key.isDown(Key.RIGHT) or Key.isDown(68)){
+		rightButton=true;
+	}//end of if right is pressed statement.
+	else {
+		rightButton=false;
+	}
+	if (Key.isDown(Key.UP) or Key.isDown(87)){
+		upButton=true;
+	}//end of if up is pressed statement.
+	else {
+		upButton=false;
+	}
+	if (Key.isDown(Key.DOWN) or Key.isDown(83)){
+		downButton=true;
+	}//end of if down is pressed statement.
+	else {
+		downButton=false;
+	}
+	if (Key.isDown(Key.CONTROL)){
+		attackButton=true;
+	}//end of if alt is pressed statement.
+	else {
+		attackButton=false;
+	}
+	if (Key.isDown(Key.SHIFT)){
+		debugButton=true;
+	}//end of if shift is pressed statement.
+	else {
+		debugButton=false;
+	}
+}//end of Listen=function()
+
+
+Move=function(){
+	if (debugButton){//beginning of debug movement with shift button.
+		debugMove();
+//		if(!attack){
+//			blue1.gotoAndStop("stance");
+//		}
+	}
+	else {
+		if (leftButton and rightButton){
+			trace("character left and right");
+			if (!attack) {
+				blue1.gotoAndStop("stance");
+			}
+		}//end of if left and right are pressed statement.
+		else {
+			if (leftButton and !rightButton){
+				blue1._rotation=0;
+				blue1._xscale=-100;
+				blue1._x-=blue1.walkspeed;
+				trace("character left");
+				if (!attack) {
+					blue1.gotoAndStop("walk");
+				}
+			}//end of if left is pressed statement.
+			if (!leftButton and rightButton){
+				blue1._rotation=0;
+				blue1._xscale=100;
+				blue1._x+=blue1.walkspeed;
+				trace("character right");
+				if (!attack) {
+					blue1.gotoAndStop("walk");
+				}
+			}//end of if right is pressed statement.
+		}//end of else statement.
+//Left/right movement should be indepentent of up/down movement.
+		if (downButton && upButton){
+			trace("character up and down");
+		}//end of if up and down are pressed statement.
+		else if (downButton){
+			trace ("character down");
+			blue1._rotation-=5;
+		}//end of else if down is pressed statement.
+		else if (upButton){
+			trace ("character up");
+			blue1._rotation+=5;
+		}//end of else if up is pressed statement.
+		else if (attackButton){
+			attack=true;
+			blue1.gotoAndStop("attack");
+			trace("character attack");
+		}//end of if else the attack button is pressed statement.
+		if (attack){
+			blue1.gotoAndStop("attack");
+			trace("character attack");
+		}
+	}//end of character movement.
+}//end of Move=function()
+this.onEnterFrame = function (){
+	
+	Listen();
+	Move();
+	//camera movement.
+		if (!debugButton){
+			_root._x=-(blue1._x)+222.85
+			_root._y=-(blue1._y)+209.75
+		}
+		hud._x=-_root._x;
+		hud._y=-_root._y;
+		
+		if (greenOrbs/greenOrbMax>=1){
+			_root.hud.loadbar.play();
+		}
+		else {
+			_root.hud.loadbar.gotoAndStop(1);
+		}
+		
+		
+	//green orbs
+		if (_root.blue1.hitTest(exit)==true and greenOrbs>=greenOrbMax){
+			gotoAndStop("secret");
+			trace("exit")
+		}
+		for (var greenOrbNum=1;greenOrbNum<=greenOrbMax;greenOrbNum++){
+			if (blue1.hitTest(_root["greenOrb"+greenOrbNum])==true){
+				for (var i=1;i<=7;i++){
+					part = _root.attachMovie("particle","particle"+particles,this.getNextHighestDepth());
+					part._x=_root["greenOrb"+greenOrbNum]._x;
+					part._y=_root["greenOrb"+greenOrbNum]._y;					
+				}
+				greenOrbs++;
+				_root["greenOrb"+greenOrbNum]._x=-20;
+			}//end of hit test if statement.
+		}//end of for loop.
+		trace(particles+" particles");
+} //end of function
+
+
+
+
+Blue (Movie Clip)  Instance Name:blue1
+	(1) Stand (Movie Clip)  Frame Name:stance
+	code:stop();
+		(1) Stand00 (Graphic)
+	(2) Walk (Movie Clip)  Frame Name:walk
+	code:(1-11)
+	if (!Key.isDown(Key.LEFT)and !Key.isDown(Key.RIGHT)){
+		gotoAndPlay(13);
+	}
+	code:(12)
+	if (Key.isDown(Key.LEFT)or Key.isDown(Key.RIGHT)){
+		gotoAndPlay(1);
+	}
+	code:(13)
+	_root.blue1.gotoAndStop("stance");
+		(1-3,7-9) Walk00 (Graphic)
